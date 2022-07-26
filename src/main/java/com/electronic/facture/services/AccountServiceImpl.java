@@ -18,21 +18,11 @@ public class AccountServiceImpl {
 
     private RoleRepo roleRepo;
     private UtilisateurRepo utilisateurRepo;
-    private PasswordEncoder passwordEncoder;
 
-    public AccountServiceImpl(@Autowired RoleRepo roleRepo, @Autowired UtilisateurRepo utilisateurRepo, @Autowired PasswordEncoder passwordEncoder){
+    @Autowired
+    public AccountServiceImpl(RoleRepo roleRepo, UtilisateurRepo utilisateurRepo, PasswordEncoder passwordEncoder){
         this.roleRepo = roleRepo;
         this.utilisateurRepo = utilisateurRepo;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public Utilisateur addNewUser(Utilisateur user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return utilisateurRepo.save(user);
-    }
-
-    public AppRole addNewRole(AppRole role) {
-        return roleRepo.save(role);
     }
 
     public void affectRoleToUser(String username, String role) {
@@ -41,12 +31,5 @@ public class AccountServiceImpl {
         user.getRoles().add(role1);
         role1.getUsers().add(user);
     }
-
-    public Utilisateur loadUserByUsername(String username) {
-        return utilisateurRepo.findByUsername(username);
-    }
-
-    public List<Utilisateur> listUsers() {
-        return utilisateurRepo.findAll();
-    }
+    
 }

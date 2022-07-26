@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.electronic.facture.models.AppRole;
 import com.electronic.facture.models.Utilisateur;
 import com.electronic.facture.services.AccountServiceImpl;
+import com.electronic.facture.services.AppRoleService;
+import com.electronic.facture.services.UtilisateurService;
 
 @SpringBootApplication
 public class EFactureApplication {
@@ -26,13 +28,13 @@ public class EFactureApplication {
     }
 	
 	@Bean
-    CommandLineRunner start(AccountServiceImpl accountService){
+    CommandLineRunner start(AccountServiceImpl accountService, AppRoleService appRoleService, UtilisateurService utilisateurService){
         return args -> {
-            accountService.addNewRole(new AppRole("ADMIN"));
-            accountService.addNewRole(new AppRole("USER"));
-            accountService.addNewUser(new Utilisateur("hassan", "hassan", new ArrayList<>()));
-            accountService.addNewUser(new Utilisateur("aabidi", "hassan", new ArrayList<>()));
-            accountService.addNewUser(new Utilisateur("hassanaabidi", "hassan", new ArrayList<>()));
+            appRoleService.addNewRole(new AppRole("ADMIN"));
+            appRoleService.addNewRole(new AppRole("USER"));
+            utilisateurService.addNewUser(new Utilisateur("hassan", "hassan", new ArrayList<>()));
+            utilisateurService.addNewUser(new Utilisateur("aabidi", "hassan", new ArrayList<>()));
+            utilisateurService.addNewUser(new Utilisateur("hassanaabidi", "hassan", new ArrayList<>()));
             accountService.affectRoleToUser("hassan", "ADMIN");
             accountService.affectRoleToUser("aabidi", "USER");
             accountService.affectRoleToUser("hassanaabidi", "USER");

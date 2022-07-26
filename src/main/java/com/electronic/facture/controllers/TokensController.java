@@ -2,6 +2,7 @@ package com.electronic.facture.controllers;
 
 import com.electronic.facture.security.JwtUtil;
 import com.electronic.facture.services.AccountServiceImpl;
+import com.electronic.facture.services.UtilisateurService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -16,12 +17,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/token")
-public class TokenRefreshController {
+public class TokensController {
 
-    private AccountServiceImpl accountService;
+    private UtilisateurService utilisateurService;
 
-    public TokenRefreshController(@Autowired AccountServiceImpl accountService){
-        this.accountService = accountService;
+    @Autowired
+    public TokensController(UtilisateurService utilisateurService){
+        this.utilisateurService = utilisateurService;
     }
 
     @GetMapping(path = "/refreshToken")
@@ -31,7 +33,7 @@ public class TokenRefreshController {
         if(authToken!=null && authToken.startsWith(JwtUtil.PREFIX)){
             try {
                 String jwt = authToken.substring(JwtUtil.PREFIX.length());
-                String jwtAccessToken = JwtUtil.createAccessTokenFromRefreshToken(jwt, request.getRequestURL().toString(), accountService);
+                String jwtAccessToken = JwtUtil.createAccessTokenFromRefreshToken(jwt, request.getRequestURL().toString(), utilisateurService);
 
                 Map<String, String> idToken = new HashMap<>();
                 idToken.put("access-token", jwtAccessToken);
