@@ -20,7 +20,7 @@ public class Modele {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id_modele;
 	
-	private String ibelle;
+	private String libelle;
 	private boolean etat;
 	private String cl_titre_cps;
 	private String cl_txt_cps;

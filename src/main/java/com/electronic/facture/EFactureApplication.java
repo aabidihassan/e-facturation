@@ -34,11 +34,8 @@ public class EFactureApplication {
             appRoleService.addNewRole(new AppRole("USER"));
             utilisateurService.addNewUser(new Utilisateur("hassan", "hassan", new ArrayList<>()));
             utilisateurService.addNewUser(new Utilisateur("aabidi", "hassan", new ArrayList<>()));
-            utilisateurService.addNewUser(new Utilisateur("hassanaabidi", "hassan", new ArrayList<>()));
             accountService.affectRoleToUser("hassan", "ADMIN");
             accountService.affectRoleToUser("aabidi", "USER");
-            accountService.affectRoleToUser("hassanaabidi", "USER");
-            accountService.affectRoleToUser("hassanaabidi", "ADMIN");
 
         };
     }

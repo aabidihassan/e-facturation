@@ -33,5 +33,9 @@ public class UtilisateurService {
     public List<Utilisateur> listUsers() {
         return utilisateurRepo.findAll();
     }
+    
+    public Utilisateur edit(Utilisateur user) {
+    	return this.addNewUser(user);
+    }
 
 }

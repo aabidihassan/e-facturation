@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
 
 public class JwtUtil {
 
-    public static final String SECRET = "mySecret123";
+	public static final String SECRET = "mySecret123";
     public static final String AUTH_HEADER = "Authorization";
     public static final String PREFIX = "Bearer ";
-    public static final long EXPIRE_ACCESS_TOKEN = 5*60*1000;
-    public static final long EXPIRE_REFRESH_TOKEN = 30*24*60*60*1000;
+    public static final long EXPIRE_ACCESS_TOKEN = 60*60*1000;
+    public static final long EXPIRE_REFRESH_TOKEN = 192*60*60*1000;
 
 
     private static final Algorithm algorithm = Algorithm.HMAC256(JwtUtil.SECRET);
@@ -50,7 +50,7 @@ public class JwtUtil {
         Utilisateur user = utilisateurService.loadUserByUsername(username);
         return JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis()+(5*60*1000)))
+                .withExpiresAt(new Date(System.currentTimeMillis()+JwtUtil.EXPIRE_ACCESS_TOKEN))
                 .withIssuer(url)
                 .withClaim("roles", user.getRoles().stream().map(ga->ga.getLibelle()).collect(Collectors.toList()))
                 .sign(algorithm);

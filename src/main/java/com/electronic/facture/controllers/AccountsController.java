@@ -7,10 +7,10 @@ import com.electronic.facture.services.UtilisateurService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.*;
 
 @RestController
 @RequestMapping("api/accounts")
@@ -36,5 +36,29 @@ public class AccountsController {
     public Utilisateur profile(Principal principal){
         return utilisateurService.loadUserByUsername(principal.getName());
     }
+    
+    @PostMapping(path = "/register")
+    public Utilisateur create(@RequestBody Utilisateur user) {
+    	user = this.utilisateurService.addNewUser(user);
+    	this.accountService.affectRoleToUser(user.getUsername(), "USER");
+    	return user;
+    }
+    
+    @DeleteMapping(path = "/delete/{username}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public Utilisateur delete(@PathVariable(name = "username") String username) {
+    	Utilisateur user = this.utilisateurService.loadUserByUsername(username);
+    	if(user!=null)
+    		this.accountService.delete(user);
+    	return user;
+    }
+    
+   @PatchMapping(path = "/modify")
+   @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
+    public Utilisateur modify(@RequestBody Utilisateur user, Principal principal) {
+	   if(utilisateurService.loadUserByUsername(principal.getName()).getUsername().equals(user.getUsername()))
+		   return this.utilisateurService.edit(user);
+	   return null;
+   }
 
 }

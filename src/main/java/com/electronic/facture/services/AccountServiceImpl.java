@@ -10,8 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @Transactional
 public class AccountServiceImpl {
@@ -30,6 +28,14 @@ public class AccountServiceImpl {
         AppRole role1 = roleRepo.findByLibelle(role);
         user.getRoles().add(role1);
         role1.getUsers().add(user);
+    }
+    
+    public Utilisateur create(Utilisateur user) {
+    	return this.utilisateurRepo.save(user);
+    }
+    
+    public void delete(Utilisateur user) {
+    	this.utilisateurRepo.delete(user);
     }
     
 }

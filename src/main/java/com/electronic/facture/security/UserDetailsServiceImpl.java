@@ -1,7 +1,6 @@
 package com.electronic.facture.security;
 
 import com.electronic.facture.models.Utilisateur;
-import com.electronic.facture.services.AccountServiceImpl;
 import com.electronic.facture.services.UtilisateurService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +18,9 @@ import java.util.Collection;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    public UtilisateurService utilisateurService;
-    
-    @Autowired
+	public UtilisateurService utilisateurService;
+	
+	@Autowired
     public UserDetailsServiceImpl(UtilisateurService utilisateurService){
         this.utilisateurService = utilisateurService;
     }
