@@ -31,12 +31,6 @@ public class UtilisateurController {
         return utilisateurService.listUsers();
     }
 	
-	@PostMapping("/save")
-    @PostAuthorize("hasAnyAuthority('ADMIN')")
-    public Utilisateur saveUser(@RequestBody Utilisateur user){
-        return this.utilisateurService.addNewUser(user);
-    }
-	
 	@GetMapping("/{username}")
     @PostAuthorize("hasAnyAuthority('ADMIN')")
     public Utilisateur getUserByUsername(@PathVariable String username){

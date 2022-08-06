@@ -1,6 +1,7 @@
 package com.electronic.facture.controllers;
 
 import com.electronic.facture.dto.AffectRoleToUserDto;
+import com.electronic.facture.models.AppRole;
 import com.electronic.facture.models.Utilisateur;
 import com.electronic.facture.services.AccountServiceImpl;
 import com.electronic.facture.services.UtilisateurService;
@@ -56,7 +57,8 @@ public class AccountsController {
    @PatchMapping(path = "/modify")
    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
     public Utilisateur modify(@RequestBody Utilisateur user, Principal principal) {
-	   if(utilisateurService.loadUserByUsername(principal.getName()).getUsername().equals(user.getUsername()))
+	   if(utilisateurService.loadUserByUsername(principal.getName()).getUsername().equals(user.getUsername()) ||
+			   utilisateurService.loadUserByUsername(principal.getName()).getRoles().get(0).equals(new AppRole("ADMIN")))
 		   return this.utilisateurService.edit(user);
 	   return null;
    }

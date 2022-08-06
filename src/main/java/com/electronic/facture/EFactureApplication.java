@@ -1,6 +1,5 @@
 package com.electronic.facture;
 
-import java.util.ArrayList;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -27,17 +26,17 @@ public class EFactureApplication {
         return new BCryptPasswordEncoder();
     }
 	
-	@Bean
-    CommandLineRunner start(AccountServiceImpl accountService, AppRoleService appRoleService, UtilisateurService utilisateurService){
-        return args -> {
-            appRoleService.addNewRole(new AppRole("ADMIN"));
-            appRoleService.addNewRole(new AppRole("USER"));
-            utilisateurService.addNewUser(new Utilisateur("hassan", "hassan", new ArrayList<>()));
-            utilisateurService.addNewUser(new Utilisateur("aabidi", "hassan", new ArrayList<>()));
-            accountService.affectRoleToUser("hassan", "ADMIN");
-            accountService.affectRoleToUser("aabidi", "USER");
-
-        };
-    }
+//	@Bean
+//    CommandLineRunner start(AccountServiceImpl accountService, AppRoleService appRoleService, UtilisateurService utilisateurService){
+//        return args -> {
+//            appRoleService.addNewRole(new AppRole("ADMIN"));
+//            appRoleService.addNewRole(new AppRole("USER"));
+//            utilisateurService.addNewUser(new Utilisateur("hassan", "hassan"));
+//            utilisateurService.addNewUser(new Utilisateur("aabidi", "hassan"));
+//            accountService.affectRoleToUser("hassan", "ADMIN");
+//            accountService.affectRoleToUser("aabidi", "USER");
+//
+//        };
+//    }
 
 }

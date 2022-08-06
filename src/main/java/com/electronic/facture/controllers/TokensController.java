@@ -1,7 +1,6 @@
 package com.electronic.facture.controllers;
 
 import com.electronic.facture.security.JwtUtil;
-import com.electronic.facture.services.AccountServiceImpl;
 import com.electronic.facture.services.UtilisateurService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,6 @@ public class TokensController {
     }
 
     @GetMapping(path = "/refreshToken")
-    @PostAuthorize("hasAnyAuthority('ADMIN')")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws Exception{
         String authToken = request.getHeader(JwtUtil.AUTH_HEADER);
         if(authToken!=null && authToken.startsWith(JwtUtil.PREFIX)){

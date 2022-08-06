@@ -14,14 +14,22 @@ public class UtilisateurService {
 	
 	private UtilisateurRepo utilisateurRepo;
 	private PasswordEncoder passwordEncoder;
+	private EmailSenderService emailSenderService;
 	
 	@Autowired
-	public UtilisateurService(UtilisateurRepo utilisateurRepo, PasswordEncoder passwordEncoder) {
+	public UtilisateurService(UtilisateurRepo utilisateurRepo, PasswordEncoder passwordEncoder, EmailSenderService emailSenderService) {
 		this.utilisateurRepo = utilisateurRepo;
 		this.passwordEncoder = passwordEncoder;
+		this.emailSenderService = emailSenderService;
 	}
 	
 	public Utilisateur addNewUser(Utilisateur user) {
+		this.emailSenderService.sendEmail(user.getEntreprise().getEmail(), "Votre Compte", 
+    			"Bonjour "+user.getEntreprise().getRaison()+
+    			", \nLe compte de votre entreprise "
+    					+"\" est bien cree. \nVous pouvez authentifier en utilisant: \nNom d'utilisateur : "
+    					+ user.getUsername() + "\nMot de passe : "+user.getPassword()
+    					+ "\nBonne reception.");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return utilisateurRepo.save(user);
     }

@@ -1,6 +1,5 @@
 package com.electronic.facture.models;
 
-import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +17,8 @@ public class Reglement {
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id_reglement;
+	
+	private double montant;
 	
 	@ManyToOne
 	private Facture facture;

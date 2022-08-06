@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.*;
+
+import org.hibernate.annotations.Cascade;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,5 +22,12 @@ public class Utilisateur {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     @ManyToMany(fetch = FetchType.EAGER)
-    List<AppRole> roles = new ArrayList<>();
+    private List<AppRole> roles = new ArrayList<>();
+    @OneToOne @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private Entreprise entreprise;
+    
+    public Utilisateur(String username, String password) {
+    	this.username = username;
+    	this.password = password;
+    }
 }

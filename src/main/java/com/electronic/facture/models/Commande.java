@@ -24,7 +24,13 @@ public class Commande {
 	@ManyToMany(mappedBy = "commandes")
 	private List<Produit> produits = new ArrayList<Produit>();
 	
+	@ManyToMany(mappedBy = "commandes")
+	private List<Service> services = new ArrayList<Service>();
+	
 	@ManyToOne
 	private Client client;
+	
+	@ManyToOne
+	private Facture facture;
 
 }

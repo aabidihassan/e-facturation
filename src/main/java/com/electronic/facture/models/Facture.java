@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import lombok.AllArgsConstructor;
@@ -31,6 +32,12 @@ public class Facture {
 	private double taxe1;
 	private double taxe2;
 	private double remise;
+	
+	@ManyToOne
+	private Facture_statut statut;
+	
+	@OneToMany(mappedBy = "facture")
+	private List<Commande> commandes = new ArrayList<Commande>();
 	
 	@OneToMany(mappedBy = "facture")
 	private List<Reglement> reglements = new ArrayList<Reglement>();

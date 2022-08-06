@@ -30,10 +30,6 @@ public class AccountServiceImpl {
         role1.getUsers().add(user);
     }
     
-    public Utilisateur create(Utilisateur user) {
-    	return this.utilisateurRepo.save(user);
-    }
-    
     public void delete(Utilisateur user) {
     	this.utilisateurRepo.delete(user);
     }
