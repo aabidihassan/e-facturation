@@ -6,12 +6,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-
-import org.hibernate.annotations.Cascade;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 @Data @NoArgsConstructor @AllArgsConstructor
@@ -25,7 +31,8 @@ public class Utilisateur {
     @ManyToMany(fetch = FetchType.EAGER)
     @JsonIgnoreProperties("users")
     private List<AppRole> roles = new ArrayList<>();
-    @OneToOne @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER) @Cascade(CascadeType.ALL)
+    @JsonIgnoreProperties("utilisateur")
     private Entreprise entreprise;
     
     public Utilisateur(String username, String password) {

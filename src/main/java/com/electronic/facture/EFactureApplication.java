@@ -26,17 +26,17 @@ public class EFactureApplication {
         return new BCryptPasswordEncoder();
     }
 	
-//	@Bean
-//    CommandLineRunner start(AccountServiceImpl accountService, AppRoleService appRoleService, UtilisateurService utilisateurService){
-//        return args -> {
-//            appRoleService.addNewRole(new AppRole("ADMIN"));
-//            appRoleService.addNewRole(new AppRole("USER"));
+	@Bean
+    CommandLineRunner start(AccountServiceImpl accountService, AppRoleService appRoleService, UtilisateurService utilisateurService){
+        return args -> {
+            appRoleService.addNewRole(new AppRole("ADMIN"));
+            appRoleService.addNewRole(new AppRole("USER"));
 //            utilisateurService.addNewUser(new Utilisateur("hassan", "hassan"));
 //            utilisateurService.addNewUser(new Utilisateur("aabidi", "hassan"));
 //            accountService.affectRoleToUser("hassan", "ADMIN");
 //            accountService.affectRoleToUser("aabidi", "USER");
-//
-//        };
-//    }
+
+        };
+    }
 
 }

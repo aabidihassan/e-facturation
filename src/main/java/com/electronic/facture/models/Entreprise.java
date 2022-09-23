@@ -4,11 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,8 +30,8 @@ public class Entreprise {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id_entreprise;
 	
-	@OneToOne(mappedBy = "entreprise")
-	Utilisateur utilisateur;
+	@OneToOne(mappedBy = "entreprise", fetch = FetchType.EAGER) @JsonIgnoreProperties("entreprise")
+	private Utilisateur utilisateur;
 	private String raison;
 	private String telephone1;
 	private String telephone2;
@@ -35,13 +44,21 @@ public class Entreprise {
 	private String logo;
 	private double taxe;
 	
-	@ManyToMany
-	private List<Categorie> categories = new ArrayList<Categorie>();
+	@ManyToOne
+	private Categorie categorie;
 	
 	@ManyToMany
 	private List<Client> clients = new ArrayList<Client>();
 	
-	@ManyToMany
+	@OneToMany(mappedBy = "entreprise") @JsonIgnoreProperties("entreprise")
 	private List<Modele> modeles = new ArrayList<Modele>();
+	
+	@OneToMany(mappedBy = "entreprise") @JsonIgnoreProperties("entreprise")
+	@Cascade(CascadeType.ALL)
+	private List<Produit> produits = new ArrayList<Produit>();
+	
+	@OneToMany(mappedBy = "entreprise") @JsonIgnoreProperties("entreprise")
+	@Cascade(CascadeType.ALL)
+	private List<ServiceApp> services = new ArrayList<ServiceApp>();
 
 }

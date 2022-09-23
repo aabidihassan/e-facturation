@@ -25,7 +25,7 @@ public class Commande {
 	private List<Produit> produits = new ArrayList<Produit>();
 	
 	@ManyToMany(mappedBy = "commandes")
-	private List<Service> services = new ArrayList<Service>();
+	private List<ServiceApp> services = new ArrayList<ServiceApp>();
 	
 	@ManyToOne
 	private Client client;

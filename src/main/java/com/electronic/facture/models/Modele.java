@@ -8,6 +8,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,30 +24,35 @@ public class Modele {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id_modele;
 	
-	private String libelle;
-	private boolean etat;
-	private String cl_titre_cps;
-	private String cl_txt_cps;
-	private String pl_titre_cps;
-	private String pl_txt_cps;
+	private String nom_modelep;
+	private boolean prefixe;
+	private String description;
+	private String type_modele;
+	private String casse;
+	private String pied;
+	private String cl_titre_corps;
+	private String cl_txt_corps;
+	private String pl_titre_corps;
+	private String pl_txt_corps;
 	private String cl_titre_entt;
 	private String cl_txt_entt;
 	private String pl_titre_entt;
 	private String pl_txt_entt;
-	private String pl_bas;
-	private String brd_tab;
-	private String cl_tab;
+	private String cl_bas;
 	private String cl_total;
 	private String pl_total;
-	private boolean classe;
-	private String dispo_logo;
-	private String dispo_ref;
-	private String dispo_dest;
-	private String dispo_dates;
-	private String dispo_entt;
-	private String dispo_liv;
+	private String pl_bas;
+	private String style_bordure;
+	private String cl_bordure;
+	private String cl_template;
+	private int taill_titre_entt;
+	private int taill_txt_entt;
+	private int taill_bas;
+	private int taill_total;
+	private int taill_titre_corps;
+	private int taill_txt_corps;
 	
-	@ManyToMany(mappedBy = "modeles")
-	private List<Entreprise> entreprises = new ArrayList<Entreprise>();
+	@ManyToOne @JsonIgnoreProperties("entreprise")
+	private Entreprise entreprise;
 
 }

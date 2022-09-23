@@ -34,8 +34,8 @@ public class TokensController {
                 String jwtAccessToken = JwtUtil.createAccessTokenFromRefreshToken(jwt, request.getRequestURL().toString(), utilisateurService);
 
                 Map<String, String> idToken = new HashMap<>();
-                idToken.put("access-token", jwtAccessToken);
-                idToken.put("refrsh-token", jwt);
+                idToken.put("accesstoken", jwtAccessToken);
+                idToken.put("refreshtoken", jwt);
                 response.setContentType("application/json");
                 new ObjectMapper().writeValue(response.getOutputStream(), idToken);
             }catch (Exception e){
