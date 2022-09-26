@@ -29,6 +29,7 @@ public class Produit {
 	private String libelle;
 	private String description;
 	private double prix;
+	private int quantite;
 	
 	@ManyToOne(fetch = FetchType.EAGER) @JsonIgnoreProperties("produits")
 	@Cascade(CascadeType.ALL)

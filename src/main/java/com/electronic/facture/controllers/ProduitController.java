@@ -51,7 +51,7 @@ public class ProduitController {
 	
 	@DeleteMapping(path = "/{reference}")
     @PostAuthorize("hasAnyAuthority('USER')")
-	public void delete(@PathVariable String reference){
+	public void delete(@PathVariable(name = "id") String reference){
 		this.produitService.delete(reference);
 	}
 

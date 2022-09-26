@@ -8,7 +8,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -16,7 +15,6 @@ import javax.persistence.OneToOne;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
@@ -47,8 +45,11 @@ public class Entreprise {
 	@ManyToOne
 	private Categorie categorie;
 	
-	@ManyToMany
+	@OneToMany(mappedBy = "entreprise") @JsonIgnoreProperties("entreprise")
 	private List<Client> clients = new ArrayList<Client>();
+	
+	@OneToMany(mappedBy = "entreprise") @JsonIgnoreProperties("entreprise")
+	private List<Fournisseur> fournisseurs = new ArrayList<Fournisseur>();
 	
 	@OneToMany(mappedBy = "entreprise") @JsonIgnoreProperties("entreprise")
 	private List<Modele> modeles = new ArrayList<Modele>();
