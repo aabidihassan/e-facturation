@@ -11,13 +11,20 @@ import com.electronic.facture.repositories.ServiceRepo;
 public class ServiceAppService {
 	
 	private ServiceRepo serviceRepo;
+	private ReferenceService referenceService;
 	
 	@Autowired
-	public ServiceAppService(ServiceRepo serviceRepo) {
+	public ServiceAppService(ServiceRepo serviceRepo, ReferenceService referenceService) {
 		this.serviceRepo = serviceRepo;
+		this.referenceService = referenceService;
 	}
 	
 	public ServiceApp save(ServiceApp service, Utilisateur user){
+		if(service.getReference()==null) {
+			service.setReference("serv" + this.referenceService.get().getService());
+			this.referenceService.incrementService();
+		}
+		
 		service.setEntreprise(user.getEntreprise());
 		return this.serviceRepo.save(service);
 	}

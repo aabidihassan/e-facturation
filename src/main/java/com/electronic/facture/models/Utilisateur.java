@@ -28,8 +28,8 @@ public class Utilisateur {
     private String username;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JsonIgnoreProperties("users")
+    @ManyToMany(fetch = FetchType.EAGER) @JsonIgnoreProperties("users")
+    @Cascade(CascadeType.ALL)
     private List<AppRole> roles = new ArrayList<>();
     @OneToOne(fetch = FetchType.EAGER) @Cascade(CascadeType.ALL)
     @JsonIgnoreProperties("utilisateur")

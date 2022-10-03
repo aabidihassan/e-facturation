@@ -23,6 +23,7 @@ public class Client {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id_client;
 	
+	private String reference;
 	private String type;
 	private String raison;
 	private String nom;

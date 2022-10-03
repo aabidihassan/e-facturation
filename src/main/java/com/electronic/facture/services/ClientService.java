@@ -11,13 +11,20 @@ import com.electronic.facture.repositories.ClientRepo;
 public class ClientService {
 	
 	private ClientRepo clientRepo;
+	private ReferenceService referenceService;
 	
 	@Autowired
-	public ClientService(ClientRepo clientRepo) {
+	public ClientService(ClientRepo clientRepo, ReferenceService referenceService) {
 		this.clientRepo = clientRepo;
+		this.referenceService = referenceService;
 	}
 	
 	public Client save(Client client, Utilisateur user) {
+		if(client.getReference()==null) {
+			client.setReference("cli" + this.referenceService.get().getClient());
+			this.referenceService.incrementClient();
+		}
+		
 		client.setEntreprise(user.getEntreprise());
 		return this.clientRepo.save(client);
 	}

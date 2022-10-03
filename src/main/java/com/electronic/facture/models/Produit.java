@@ -6,6 +6,8 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -23,16 +25,18 @@ import lombok.NoArgsConstructor;
 @Data @NoArgsConstructor @AllArgsConstructor
 public class Produit {
 	
-	@Id @Column(length = 20)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id_produit;
+	
 	private String reference;
 	
 	private String libelle;
 	private String description;
 	private double prix;
 	private int quantite;
+	private String photo;
 	
 	@ManyToOne(fetch = FetchType.EAGER) @JsonIgnoreProperties("produits")
-	@Cascade(CascadeType.ALL)
 	private Entreprise entreprise;
 	
 	@ManyToMany @JsonIgnoreProperties("commandes")

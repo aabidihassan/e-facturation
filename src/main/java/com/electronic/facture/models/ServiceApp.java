@@ -28,6 +28,7 @@ public class ServiceApp {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id_service;
 	
+	private String reference;
 	private String libelle;
 	private String description;
 	private double prix;

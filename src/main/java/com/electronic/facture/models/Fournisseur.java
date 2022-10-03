@@ -19,6 +19,7 @@ public class Fournisseur {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id_fournisseur;
 	
+	private String reference;
 	private String type;
 	private String raison;
 	private String nom;

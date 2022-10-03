@@ -11,13 +11,20 @@ import com.electronic.facture.repositories.FournisseurRepo;
 public class FournisseurService {
 	
 	private FournisseurRepo fournisseurRepo;
+	private ReferenceService referenceService;
 	
 	@Autowired
-	public FournisseurService(FournisseurRepo fournisseurRepo) {
+	public FournisseurService(FournisseurRepo fournisseurRepo, ReferenceService referenceService) {
 		this.fournisseurRepo = fournisseurRepo;
+		this.referenceService = referenceService;
 	}
 	
 	public Fournisseur save(Fournisseur fournisseur, Utilisateur user) {
+		if(fournisseur.getReference()==null) {
+			fournisseur.setReference("four" + this.referenceService.get().getFournisseur());
+			this.referenceService.incrementFournisseur();
+		}
+		
 		fournisseur.setEntreprise(user.getEntreprise());
 		return this.fournisseurRepo.save(fournisseur);
 	}

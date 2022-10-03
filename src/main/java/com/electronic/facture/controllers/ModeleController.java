@@ -4,7 +4,12 @@ import java.io.IOException;
 import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,21 +33,22 @@ public class ModeleController {
 		this.utilisateurService = utilisateurService;
 	}
 	
-//	@PostMapping(path = "/")
-//    @PostAuthorize("hasAnyAuthority('ADMIN', 'USER')")
-//	public Modele save(@RequestBody Modele modele) {
-//		return this.modeleService.save(modele);
-//	}
-	
 	@PostMapping(path = "/")
     @PostAuthorize("hasAnyAuthority('USER')")
 	public Modele save(@RequestBody Modele modele, Principal principal) throws IOException {
 		return this.modeleService.save(modele, utilisateurService.loadUserByUsername(principal.getName()));
 	}
 	
-//	@GetMapping("/model")
-//	public void generate() throws JRException, IOException {
-//		System.out.println(this.modeleService.generateModel());
-//	}
+	@GetMapping("/{id}/{filename}")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<Resource> getFile(@PathVariable("filename") String filename, @PathVariable("id") long id) throws IOException{
+		return this.modeleService.download(filename, id);
+	}
+	
+	@GetMapping("/{id}")
+	@PreAuthorize("hasAuthority('USER')")
+	public void delete(@PathVariable("id") long id){
+		this.modeleService.delete(id);
+	}
 	
 }
