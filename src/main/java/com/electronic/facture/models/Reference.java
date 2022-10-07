@@ -20,5 +20,6 @@ public class Reference {
 	private int service;
 	private int client;
 	private int fournisseur;
+	private int facture;
 
 }

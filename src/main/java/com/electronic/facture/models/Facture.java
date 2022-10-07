@@ -1,15 +1,22 @@
 package com.electronic.facture.models;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,30 +29,24 @@ public class Facture {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long numero;
 	
-	private Date creation;
-	private Date validation;
-	private Date echeance;
-	private String destination;
-	private String livraison;
-	private String email;
-	private String telephone;
-	private double taxe1;
-	private double taxe2;
-	private double remise;
+	private String reference;
+	private String creation;
+	private String validation;
+	private String echeance;
+	private double ht;
+	private double ttc;
+	private String statut;
+	private double reste;
 	
-	@ManyToOne
-	private Facture_statut statut;
+	@ManyToOne(fetch = FetchType.EAGER) @JsonIgnoreProperties("factures")
+	private Client client;
 	
-	@OneToMany(mappedBy = "facture")
-	private List<Commande> commandes = new ArrayList<Commande>();
+	@OneToMany(mappedBy = "facture", fetch = FetchType.EAGER) 
+	@Fetch(value = FetchMode.SUBSELECT)
+	private List<LigneCommande> lignes = new ArrayList<LigneCommande>();
 	
-	@OneToMany(mappedBy = "facture")
+	@OneToMany(mappedBy = "facture", fetch = FetchType.EAGER) 
+	@Fetch(value = FetchMode.SUBSELECT)
 	private List<Reglement> reglements = new ArrayList<Reglement>();
-	
-	@OneToMany(mappedBy = "facture")
-	private List<Devis> devises = new ArrayList<>();
-	
-	@OneToMany(mappedBy = "facture")
-	private List<ACompte> acomptes = new ArrayList<>();
 	
 }

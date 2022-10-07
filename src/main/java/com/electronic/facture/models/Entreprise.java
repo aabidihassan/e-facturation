@@ -15,6 +15,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -44,10 +46,11 @@ public class Entreprise {
 	private String logo;
 	private double taxe;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER) @JsonIgnoreProperties("entreprises")
 	private Categorie categorie;
 	
-	@OneToMany(mappedBy = "entreprise") @JsonIgnoreProperties("entreprise")
+	@OneToMany(mappedBy = "entreprise", fetch = FetchType.EAGER)
+	@Fetch(value = FetchMode.SUBSELECT)
 	private List<Client> clients = new ArrayList<Client>();
 	
 	@OneToMany(mappedBy = "entreprise") @JsonIgnoreProperties("entreprise")

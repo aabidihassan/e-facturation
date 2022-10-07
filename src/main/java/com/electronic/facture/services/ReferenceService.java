@@ -47,5 +47,11 @@ public class ReferenceService {
 		ref.setService(ref.getService()+1);
 		this.referenceRepo.save(ref);
 	}
+	
+	public void incrementFacture() {
+		Reference ref = this.get();
+		ref.setFacture(ref.getFacture()+1);
+		this.referenceRepo.save(ref);
+	}
 
 }

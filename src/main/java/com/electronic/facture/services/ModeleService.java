@@ -462,6 +462,7 @@ public class ModeleService {
 			            Integer.valueOf( modele.getCl_bas().substring( 3, 5 ), 16 ),
 			            Integer.valueOf( modele.getCl_bas().substring( 5, 7 ), 16 )))
 				.setBorder(Border.NO_BORDER)
+				.setTextAlignment(TextAlignment.CENTER)
 				.setFontSize(modele.getTaill_bas())
 				.setBackgroundColor(new DeviceRgb(Integer.valueOf( modele.getCl_template().substring( 1, 3 ), 16 ),
 			            Integer.valueOf( modele.getCl_template().substring( 3, 5 ), 16 ),

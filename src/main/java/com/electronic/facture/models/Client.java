@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -35,10 +39,11 @@ public class Client {
 	private String ville;
 	private long code_postal;
 	
-	@OneToMany(mappedBy = "client") @JsonIgnoreProperties("client")
-	private List<Commande> commandes = new ArrayList<Commande>();
+	@OneToMany(mappedBy = "client", fetch = FetchType.EAGER) 
+	@Fetch(value = FetchMode.SUBSELECT)
+	private List<Facture> factures = new ArrayList<Facture>();
 	
-	@ManyToOne @JsonIgnoreProperties("client")
+	@ManyToOne(fetch = FetchType.EAGER) @JsonIgnoreProperties("clients")
 	private Entreprise entreprise;
 
 }

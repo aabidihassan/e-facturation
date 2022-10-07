@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class AppRole {
     @Id
     @Column(length = 5)
     private String libelle;
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     @JsonIgnoreProperties("roles")
     private List<Utilisateur> users = new ArrayList<>();
 

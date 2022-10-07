@@ -101,8 +101,8 @@ public class AccountServiceImpl {
 		if (! directory.exists()) directory.mkdirs();
 		Path filestorage = Paths.get(DIRECTORY + user.getEntreprise().getId_entreprise() + "/logo/", filename).toAbsolutePath().normalize();
 		Files.copy(file.getInputStream(), filestorage);
-		AccountServiceImpl.resize(DIRECTORY + user.getEntreprise().getId_entreprise() + "/logo/",
-				DIRECTORY + user.getEntreprise().getId_entreprise() + "/logo/", 100, 100);
+		AccountServiceImpl.resize(DIRECTORY + user.getEntreprise().getId_entreprise() + "/logo/" + filename,
+				DIRECTORY + user.getEntreprise().getId_entreprise() + "/logo/" + filename, 100, 100);
 		user.getEntreprise().setLogo(user.getEntreprise().getId_entreprise() + "/logo/" + filename);
 		return this.utilisateurRepo.save(user);
     }
