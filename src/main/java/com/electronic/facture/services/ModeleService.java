@@ -169,6 +169,14 @@ public class ModeleService {
 		
 		
 		Table dest = new Table(2);
+		dest.addCell(new Cell().add("Expéditeur :")
+				.setFontSize(modele.getTaill_titre_corps())
+				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_titre_corps().substring( 1, 3 ), 16 ),
+			            Integer.valueOf( modele.getCl_titre_corps().substring( 3, 5 ), 16 ),
+			            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 )))
+				.setBold()
+				.setUnderline()
+				.setBorder(Border.NO_BORDER));
 		dest.addCell(new Cell().add("Destinataire :")
 				.setFontSize(modele.getTaill_titre_corps())
 				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_titre_corps().substring( 1, 3 ), 16 ),
@@ -176,27 +184,6 @@ public class ModeleService {
 			            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 )))
 				.setBold()
 				.setUnderline()
-				.setBorder(Border.NO_BORDER));
-		dest.addCell(new Cell().add("Envoyez à :")
-				.setFontSize(modele.getTaill_titre_corps())
-				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_titre_corps().substring( 1, 3 ), 16 ),
-			            Integer.valueOf( modele.getCl_titre_corps().substring( 3, 5 ), 16 ),
-			            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 )))
-				.setBold()
-				.setUnderline()
-				.setBorder(Border.NO_BORDER));
-		
-		dest.addCell(new Cell().add("<Nom>")
-				.setFontSize(modele.getTaill_txt_corps())
-				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
-			            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
-			            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
-				.setBorder(Border.NO_BORDER));
-		dest.addCell(new Cell().add("<Nom>")
-				.setFontSize(modele.getTaill_txt_corps())
-				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
-			            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
-			            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
 				.setBorder(Border.NO_BORDER));
 		
 		dest.addCell(new Cell().add("<Nom de la societe>")
@@ -254,7 +241,7 @@ public class ModeleService {
 		float[] detailsWidth = {250f, 100f, 125f, 125f};
 		Table details = new Table(detailsWidth);
 		
-		details.addCell(new Cell().add("Description")
+		details.addCell(new Cell().add("Libelle")
 				.setFontSize(modele.getTaill_titre_corps())
 				.setBold()
 				.setBackgroundColor(new DeviceRgb(Integer.valueOf( modele.getCl_template().substring( 1, 3 ), 16 ),
@@ -262,9 +249,8 @@ public class ModeleService {
 			            Integer.valueOf( modele.getCl_template().substring( 5, 7 ), 16 )))
 				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_titre_corps().substring( 1, 3 ), 16 ),
 			            Integer.valueOf( modele.getCl_titre_corps().substring( 3, 5 ), 16 ),
-			            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 )))
-				.setBorder(Border.NO_BORDER));
-		details.addCell(new Cell().add("QUANTITÉ")
+			            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 ))));
+		details.addCell(new Cell().add("Quantite")
 				.setFontSize(modele.getTaill_titre_corps())
 				.setBold()
 				.setBackgroundColor(new DeviceRgb(Integer.valueOf( modele.getCl_template().substring( 1, 3 ), 16 ),
@@ -272,9 +258,8 @@ public class ModeleService {
 			            Integer.valueOf( modele.getCl_template().substring( 5, 7 ), 16 )))
 				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_titre_corps().substring( 1, 3 ), 16 ),
 			            Integer.valueOf( modele.getCl_titre_corps().substring( 3, 5 ), 16 ),
-			            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 )))
-				.setBorder(Border.NO_BORDER));
-		details.addCell(new Cell().add("PRIX UNITAIRE")
+			            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 ))));
+		details.addCell(new Cell().add("Prix Unitaire")
 				.setFontSize(modele.getTaill_titre_corps())
 				.setBold()
 				.setBackgroundColor(new DeviceRgb(Integer.valueOf( modele.getCl_template().substring( 1, 3 ), 16 ),
@@ -282,9 +267,8 @@ public class ModeleService {
 			            Integer.valueOf( modele.getCl_template().substring( 5, 7 ), 16 )))
 				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_titre_corps().substring( 1, 3 ), 16 ),
 			            Integer.valueOf( modele.getCl_titre_corps().substring( 3, 5 ), 16 ),
-			            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 )))
-				.setBorder(Border.NO_BORDER));
-		details.addCell(new Cell().add("TOTAL")
+			            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 ))));
+		details.addCell(new Cell().add("Sous-Total")
 				.setFontSize(modele.getTaill_titre_corps())
 				.setBold()
 				.setBackgroundColor(new DeviceRgb(Integer.valueOf( modele.getCl_template().substring( 1, 3 ), 16 ),
@@ -292,8 +276,7 @@ public class ModeleService {
 			            Integer.valueOf( modele.getCl_template().substring( 5, 7 ), 16 )))
 				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_titre_corps().substring( 1, 3 ), 16 ),
 			            Integer.valueOf( modele.getCl_titre_corps().substring( 3, 5 ), 16 ),
-			            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 )))
-				.setBorder(Border.NO_BORDER));
+			            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 ))));
 		
 		DeviceRgb[] colors = {new DeviceRgb(255, 255, 255), new DeviceRgb(243, 243, 243)};
 		
@@ -306,9 +289,16 @@ public class ModeleService {
 			}
 		}
 		
-		details.addCell(new Cell(0,2));
+		details.addCell(new Cell(0,2)
+				.add(modele.getDescription())
+				.setFontSize(modele.getTaill_txt_corps())
+				.setBorder(Border.NO_BORDER)
+				.setTextAlignment(TextAlignment.LEFT)
+				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+			            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+			            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 ))));
 		
-		details.addCell(new Cell().add("SOUS-TOTAL")
+		details.addCell(new Cell().add("Montant HT")
 				.setFontSize(modele.getTaill_txt_corps())
 				.setTextAlignment(TextAlignment.RIGHT)
 				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
@@ -328,35 +318,14 @@ public class ModeleService {
 				.setBold()
 				.setBorder(Border.NO_BORDER));
 		
-		details.addCell(new Cell().add("REMISE")
+		details.addCell(new Cell().add("Taux d'imposition")
 				.setFontSize(modele.getTaill_txt_corps())
 				.setTextAlignment(TextAlignment.RIGHT)
 				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
 			            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
 			            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
 				.setBold());
-		details.addCell(new Cell().add("0,00")
-				.setFontSize(modele.getTaill_txt_corps())
-				.setTextAlignment(TextAlignment.RIGHT)
-				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
-			            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
-			            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
-				.setBold());
-		
-		
-		details.addCell(new Cell(0,2)
-				.setFontSize(9f)
-				.setBold()
-				.setBorder(Border.NO_BORDER));
-		
-		details.addCell(new Cell().add("SOUS-TOTAL MOINS LES REMISES")
-				.setFontSize(modele.getTaill_txt_corps())
-				.setTextAlignment(TextAlignment.RIGHT)
-				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
-			            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
-			            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
-				.setBold());
-		details.addCell(new Cell().add("0,00")
+		details.addCell(new Cell().add(user.getEntreprise().getTaxe()+"%")
 				.setFontSize(modele.getTaill_txt_corps())
 				.setTextAlignment(TextAlignment.RIGHT)
 				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
@@ -365,31 +334,16 @@ public class ModeleService {
 				.setBold());
 		
 		details.addCell(new Cell(0,2)
-				.setFontSize(9f)
-				.setBold()
-				.setBorder(Border.NO_BORDER));
-		
-		details.addCell(new Cell().add("TAUX D'IMPOSITION")
+				.add("Date d'échéance :")
 				.setFontSize(modele.getTaill_txt_corps())
-				.setTextAlignment(TextAlignment.RIGHT)
+				.setBorder(Border.NO_BORDER)
+				.setBold()
+				.setTextAlignment(TextAlignment.LEFT)
 				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
 			            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
-			            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
-				.setBold());
-		details.addCell(new Cell().add(user.getEntreprise().getTaxe()+"")
-				.setFontSize(modele.getTaill_txt_corps())
-				.setTextAlignment(TextAlignment.RIGHT)
-				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
-			            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
-			            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
-				.setBold());
+			            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 ))));
 		
-		details.addCell(new Cell(0,2)
-				.setFontSize(9f)
-				.setBold()
-				.setBorder(Border.NO_BORDER));
-		
-		details.addCell(new Cell().add("TAXE TOTAL")
+		details.addCell(new Cell().add("Montant du Taxe")
 				.setFontSize(modele.getTaill_txt_corps())
 				.setTextAlignment(TextAlignment.RIGHT)
 				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
@@ -409,51 +363,66 @@ public class ModeleService {
 				.setBold()
 				.setBorder(Border.NO_BORDER));
 		
-		details.addCell(new Cell().add("EXPEDITIO, MANUTENTION")
-				.setFontSize(modele.getTaill_txt_corps())
-				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
-			            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
-			            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
-				.setTextAlignment(TextAlignment.RIGHT)
-				.setBold());
-		details.addCell(new Cell().add("0,00")
-				.setFontSize(modele.getTaill_txt_corps())
-				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
-			            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
-			            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
-				.setTextAlignment(TextAlignment.RIGHT)
-				.setBold());
-		
-		details.addCell(new Cell(0,2)
-				.setFontSize(9f)
-				.setBold()
-				.setBorder(Border.NO_BORDER));
-		
-		details.addCell(new Cell().add("SOLDE DU")
+		details.addCell(new Cell().add("Total")
 				.setFontSize(modele.getTaill_total())
-				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_total().substring( 1, 3 ), 16 ),
-			            Integer.valueOf( modele.getCl_total().substring( 3, 5 ), 16 ),
-			            Integer.valueOf( modele.getCl_total().substring( 5, 7 ), 16 )))
+				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+			            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+			            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
 				.setTextAlignment(TextAlignment.RIGHT)
 				.setBold());
 		details.addCell(new Cell().add("0,00DH")
 				.setFontSize(modele.getTaill_total())
 				.setTextAlignment(TextAlignment.RIGHT)
-				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_total().substring( 1, 3 ), 16 ),
+				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+			            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+			            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
+				.setBackgroundColor(new DeviceRgb(Integer.valueOf( modele.getCl_total().substring( 1, 3 ), 16 ),
 			            Integer.valueOf( modele.getCl_total().substring( 3, 5 ), 16 ),
 			            Integer.valueOf( modele.getCl_total().substring( 5, 7 ), 16 )))
 				.setBold());
 		
-		Table description = new Table(1);
+		details.addCell(new Cell(0,2)
+				.setFontSize(9f)
+				.setBold()
+				.setBorder(Border.NO_BORDER));
 		
-		description.addCell(new Cell().add(modele.getDescription())
-				.setTextAlignment(TextAlignment.CENTER)
+		details.addCell(new Cell().add("Reglements")
+				.setFontSize(modele.getTaill_txt_corps())
 				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
 			            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
 			            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
-				.setBorder(Border.NO_BORDER)
+				.setTextAlignment(TextAlignment.RIGHT)
+				.setBold());
+		details.addCell(new Cell().add("0,00")
+				.setFontSize(modele.getTaill_txt_corps())
+				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+			            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+			            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
+				.setTextAlignment(TextAlignment.RIGHT)
+				.setBold());
+		
+		details.addCell(new Cell(0,2)
+				.setFontSize(9f)
 				.setBold()
-				.setFontSize(modele.getTaill_txt_corps()));
+				.setBorder(Border.NO_BORDER));
+		
+		details.addCell(new Cell().add("Montant dû")
+				.setFontSize(modele.getTaill_total())
+				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+			            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+			            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
+				.setTextAlignment(TextAlignment.RIGHT)
+				.setBold());
+		details.addCell(new Cell().add("0,00DH")
+				.setFontSize(modele.getTaill_total())
+				.setTextAlignment(TextAlignment.RIGHT)
+				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+			            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+			            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
+				.setBackgroundColor(new DeviceRgb(Integer.valueOf( modele.getCl_total().substring( 1, 3 ), 16 ),
+			            Integer.valueOf( modele.getCl_total().substring( 3, 5 ), 16 ),
+			            Integer.valueOf( modele.getCl_total().substring( 5, 7 ), 16 )))
+				.setBold());
 		
 		Table pied = new Table(1);
 		
@@ -487,7 +456,6 @@ public class ModeleService {
 		document.add(head.setMarginTop(30));
 		document.add(dest.setMarginTop(20f));
 		document.add(details.setMarginTop(20f));
-		document.add(description.setMarginTop(30f));
 		document.add(pied.setMarginTop(20f));
 		document.close();
 		

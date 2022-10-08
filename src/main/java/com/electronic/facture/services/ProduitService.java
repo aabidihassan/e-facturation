@@ -56,6 +56,12 @@ public class ProduitService {
 		return this.produitRepo.save(produit);
 	}
 	
+	public Produit editQte(long id, int dim) {
+		Produit produit = this.produitRepo.findById(id).get();
+		produit.setQuantite(produit.getQuantite()-dim);
+		return this.produitRepo.save(produit);
+	}
+	
 	public ResponseEntity<Resource> download(String id, String directory, String file) throws IOException{
 		Path filepath = Paths.get(DIRECTORY + id + "/" + directory + "/").toAbsolutePath().normalize().resolve(file);
 		if(!Files.exists(filepath)) throw new FileNotFoundException("Le fichier n'est pas trouve");
@@ -67,12 +73,12 @@ public class ProduitService {
 				.headers(headers).body(resource);
 	}
 	
-	public Produit getByReference(String reference) {
+	public Produit getByReference(long reference) {
 		return this.produitRepo.findById(reference).get();
 	}
 	
 	public Produit edit(Produit produit, Utilisateur user) {
-		Produit prod = this.getByReference(produit.getReference());
+		Produit prod = this.getByReference(produit.getId_produit());
 		if(prod != null && prod.getEntreprise().getId_entreprise() == user.getEntreprise().getId_entreprise()) {
 			prod.setDescription(produit.getDescription());
 			prod.setLibelle(produit.getLibelle());
@@ -82,7 +88,7 @@ public class ProduitService {
 		return prod;
 	}
 	
-	public void delete(String reference) {
+	public void delete(long reference) {
 		this.produitRepo.deleteById(reference);
 	}
 

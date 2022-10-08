@@ -63,10 +63,10 @@ public class ProduitController {
 		return this.produitService.edit(produit, utilisateurService.loadUserByUsername(principal.getName()));
 	}
 	
-	@GetMapping(path = "/{reference}")
+	@GetMapping(path = "/{id}")
     @PostAuthorize("hasAnyAuthority('USER')")
-	public void delete(@PathVariable(name = "reference") String reference){
-		this.produitService.delete(reference);
+	public void delete(@PathVariable(name = "id") long id){
+		this.produitService.delete(id);
 	}
 
 }

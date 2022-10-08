@@ -3,6 +3,7 @@ package com.electronic.facture.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.electronic.facture.models.Produit;
 import com.electronic.facture.models.ServiceApp;
 import com.electronic.facture.models.Utilisateur;
 import com.electronic.facture.repositories.ServiceRepo;

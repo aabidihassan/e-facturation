@@ -1,21 +1,34 @@
 package com.electronic.facture.services;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.mail.MessagingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.electronic.facture.dto.FactureSend;
 import com.electronic.facture.models.Client;
 import com.electronic.facture.models.Facture;
 import com.electronic.facture.models.LigneCommande;
 import com.electronic.facture.models.Modele;
+import com.electronic.facture.models.Produit;
 import com.electronic.facture.models.Reglement;
 import com.electronic.facture.models.Utilisateur;
 import com.electronic.facture.repositories.FactureRepo;
@@ -43,15 +56,17 @@ public class FactureService {
 	private LigneCommandeRepo ligneCommandeRepo;
 	private ReglementRepo reglementRepo;
 	private EmailSenderService emailSenderService;
+	private ProduitService produitService;
 	public static final String DIRECTORY = "src/main/resources/templates/";
 	
 	@Autowired
-	public FactureService(FactureRepo factureRepo, ReglementRepo reglementRepo, ReferenceService referenceService, LigneCommandeRepo ligneCommandeRepo, EmailSenderService emailSenderService) {
+	public FactureService(FactureRepo factureRepo,ProduitService produitService, ReglementRepo reglementRepo, ReferenceService referenceService, LigneCommandeRepo ligneCommandeRepo, EmailSenderService emailSenderService) {
 		this.factureRepo = factureRepo;
 		this.referenceService = referenceService;
 		this.ligneCommandeRepo = ligneCommandeRepo;
 		this.reglementRepo = reglementRepo;
 		this.emailSenderService = emailSenderService;
+		this.produitService = produitService;
 	}
 	
 	public Facture save(Facture facture) throws Exception {
@@ -86,6 +101,11 @@ public class FactureService {
 						reglement.setFacture(facture);
 						reglement = this.reglementRepo.save(reglement);
 					}
+					for(LigneCommande ligne : facture.getLignes()) {
+						if(ligne.getService()==null) {
+							ligne.setProduit(this.produitService.editQte(ligne.getProduit().getId_produit(), ligne.getQte()));
+						}
+					}
 				return this.factureRepo.save(facture);
 			case "paye" : return this.factureRepo.save(facture);
 		}
@@ -100,11 +120,12 @@ public class FactureService {
 		return factures;
 	}
 	
-	public void createFacture(Facture facture, Modele modele, Utilisateur user) throws IOException {
+	public ResponseEntity<Resource> createFacture(Facture facture, Modele modele, Utilisateur user) throws IOException {
 		//Get or create if not exists file
 				File directory = new File(DIRECTORY + user.getEntreprise().getId_entreprise() + "/factures/");
 				if (! directory.exists()) directory.mkdir();
-				File file = new File(directory.getPath() + "/" + facture.getReference() + "_" + modele.getNom_modelep() + ".pdf");
+				File file = new File(directory.getPath() + "/" + facture.getNumero() + "_" + modele.getNom_modelep() + ".pdf");
+				System.out.println(file.getAbsolutePath());
 				file.createNewFile();
 				FileOutputStream oFile = new FileOutputStream(file, false); 
 				
@@ -147,14 +168,15 @@ public class FactureService {
 						.setFontSize(modele.getTaill_txt_entt()));
 				
 				Table identifiants = new Table(infoWidth);
+				
 				if(facture.getStatut().equals("brouillon")) {
 					identifiants.addCell(new Cell(0,2).add("DEVIS")
-							.setBorder(Border.NO_BORDER)
-							.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_entt().substring( 1, 3 ), 16 ),
-						            Integer.valueOf( modele.getCl_txt_entt().substring( 3, 5 ), 16 ),
-						            Integer.valueOf( modele.getCl_txt_entt().substring( 5, 7 ), 16 )))
-							.setFontSize(modele.getTaill_txt_entt())
-							.setBold());
+						.setBorder(Border.NO_BORDER)
+						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_entt().substring( 1, 3 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_entt().substring( 3, 5 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_entt().substring( 5, 7 ), 16 )))
+						.setFontSize(modele.getTaill_txt_entt())
+						.setBold());
 					identifiants.addCell(new Cell(0,2).add(facture.getCreation())
 							.setBorder(Border.NO_BORDER)
 							.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_entt().substring( 1, 3 ), 16 ),
@@ -163,21 +185,19 @@ public class FactureService {
 							.setFontSize(modele.getTaill_txt_entt()));
 				}else {
 					identifiants.addCell(new Cell(0,2).add("FACTURE")
-						.setBorder(Border.NO_BORDER)
-						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_entt().substring( 1, 3 ), 16 ),
-					            Integer.valueOf( modele.getCl_txt_entt().substring( 3, 5 ), 16 ),
-					            Integer.valueOf( modele.getCl_txt_entt().substring( 5, 7 ), 16 )))
-						.setFontSize(modele.getTaill_txt_entt())
-						.setBold());
+							.setBorder(Border.NO_BORDER)
+							.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_entt().substring( 1, 3 ), 16 ),
+						            Integer.valueOf( modele.getCl_txt_entt().substring( 3, 5 ), 16 ),
+						            Integer.valueOf( modele.getCl_txt_entt().substring( 5, 7 ), 16 )))
+							.setFontSize(modele.getTaill_txt_entt())
+							.setBold());
 					identifiants.addCell(new Cell(0,2).add(facture.getValidation())
 							.setBorder(Border.NO_BORDER)
 							.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_entt().substring( 1, 3 ), 16 ),
 						            Integer.valueOf( modele.getCl_txt_entt().substring( 3, 5 ), 16 ),
 						            Integer.valueOf( modele.getCl_txt_entt().substring( 5, 7 ), 16 )))
 							.setFontSize(modele.getTaill_txt_entt()));
-				}
-				
-				
+				}				
 				
 				identifiants.addCell(new Cell(0,2).add(facture.getReference())
 						.setBorder(Border.NO_BORDER)
@@ -234,7 +254,7 @@ public class FactureService {
 				
 				
 				Table dest = new Table(2);
-				dest.addCell(new Cell().add("Destinataire :")
+				dest.addCell(new Cell().add("Expéditeur :")
 						.setFontSize(modele.getTaill_titre_corps())
 						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_titre_corps().substring( 1, 3 ), 16 ),
 					            Integer.valueOf( modele.getCl_titre_corps().substring( 3, 5 ), 16 ),
@@ -242,7 +262,7 @@ public class FactureService {
 						.setBold()
 						.setUnderline()
 						.setBorder(Border.NO_BORDER));
-				dest.addCell(new Cell().add("Envoyez à :")
+				dest.addCell(new Cell().add("Destinataire :")
 						.setFontSize(modele.getTaill_titre_corps())
 						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_titre_corps().substring( 1, 3 ), 16 ),
 					            Integer.valueOf( modele.getCl_titre_corps().substring( 3, 5 ), 16 ),
@@ -257,12 +277,22 @@ public class FactureService {
 					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
 					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
 						.setBorder(Border.NO_BORDER));
-				dest.addCell(new Cell().add(facture.getClient().getRaison() + facture.getClient().getNom())
-						.setFontSize(modele.getTaill_txt_corps())
-						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
-					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
-					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
-						.setBorder(Border.NO_BORDER));
+				if(facture.getClient().getRaison()!=null) {
+					dest.addCell(new Cell().add(facture.getClient().getRaison())
+							.setFontSize(modele.getTaill_txt_corps())
+							.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+						            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+						            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
+							.setBorder(Border.NO_BORDER));
+				}else {
+					dest.addCell(new Cell().add(facture.getClient().getNom())
+							.setFontSize(modele.getTaill_txt_corps())
+							.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+						            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+						            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
+							.setBorder(Border.NO_BORDER));
+				}
+				
 				
 				dest.addCell(new Cell().add(user.getEntreprise().getAdresse1())
 						.setFontSize(modele.getTaill_txt_corps())
@@ -306,7 +336,7 @@ public class FactureService {
 				float[] detailsWidth = {250f, 100f, 125f, 125f};
 				Table details = new Table(detailsWidth);
 				
-				details.addCell(new Cell().add("Description")
+				details.addCell(new Cell().add("Libelle")
 						.setFontSize(modele.getTaill_titre_corps())
 						.setBold()
 						.setBackgroundColor(new DeviceRgb(Integer.valueOf( modele.getCl_template().substring( 1, 3 ), 16 ),
@@ -314,9 +344,8 @@ public class FactureService {
 					            Integer.valueOf( modele.getCl_template().substring( 5, 7 ), 16 )))
 						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_titre_corps().substring( 1, 3 ), 16 ),
 					            Integer.valueOf( modele.getCl_titre_corps().substring( 3, 5 ), 16 ),
-					            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 )))
-						.setBorder(Border.NO_BORDER));
-				details.addCell(new Cell().add("QUANTITÉ")
+					            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 ))));
+				details.addCell(new Cell().add("Quantite")
 						.setFontSize(modele.getTaill_titre_corps())
 						.setBold()
 						.setBackgroundColor(new DeviceRgb(Integer.valueOf( modele.getCl_template().substring( 1, 3 ), 16 ),
@@ -324,9 +353,8 @@ public class FactureService {
 					            Integer.valueOf( modele.getCl_template().substring( 5, 7 ), 16 )))
 						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_titre_corps().substring( 1, 3 ), 16 ),
 					            Integer.valueOf( modele.getCl_titre_corps().substring( 3, 5 ), 16 ),
-					            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 )))
-						.setBorder(Border.NO_BORDER));
-				details.addCell(new Cell().add("PRIX UNITAIRE")
+					            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 ))));
+				details.addCell(new Cell().add("Prix Unitaire")
 						.setFontSize(modele.getTaill_titre_corps())
 						.setBold()
 						.setBackgroundColor(new DeviceRgb(Integer.valueOf( modele.getCl_template().substring( 1, 3 ), 16 ),
@@ -334,9 +362,8 @@ public class FactureService {
 					            Integer.valueOf( modele.getCl_template().substring( 5, 7 ), 16 )))
 						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_titre_corps().substring( 1, 3 ), 16 ),
 					            Integer.valueOf( modele.getCl_titre_corps().substring( 3, 5 ), 16 ),
-					            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 )))
-						.setBorder(Border.NO_BORDER));
-				details.addCell(new Cell().add("TOTAL")
+					            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 ))));
+				details.addCell(new Cell().add("Sous-Total")
 						.setFontSize(modele.getTaill_titre_corps())
 						.setBold()
 						.setBackgroundColor(new DeviceRgb(Integer.valueOf( modele.getCl_template().substring( 1, 3 ), 16 ),
@@ -344,61 +371,91 @@ public class FactureService {
 					            Integer.valueOf( modele.getCl_template().substring( 5, 7 ), 16 )))
 						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_titre_corps().substring( 1, 3 ), 16 ),
 					            Integer.valueOf( modele.getCl_titre_corps().substring( 3, 5 ), 16 ),
-					            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 )))
-						.setBorder(Border.NO_BORDER));
+					            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 ))));
 				
 				DeviceRgb[] colors = {new DeviceRgb(255, 255, 255), new DeviceRgb(243, 243, 243)};
-
-				int j = 0;
+				
+				int j=0;
 				for(LigneCommande ligne : facture.getLignes()) {
 					if(ligne.getService()==null) {
 						details.addCell(new Cell().add(ligne.getProduit().getLibelle())
-							.setFontSize(9f)
-							.setBackgroundColor(colors[j%2])
-							.setFontColor(Color.BLACK));
+								.setFontSize(modele.getTaill_txt_corps())
+								.setTextAlignment(TextAlignment.LEFT)
+								.setBackgroundColor(colors[j%2])
+								.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+							            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+							            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 ))));
 						details.addCell(new Cell().add(ligne.getQte()+"")
-								.setFontSize(9f)
+								.setFontSize(modele.getTaill_txt_corps())
+								.setTextAlignment(TextAlignment.LEFT)
 								.setBackgroundColor(colors[j%2])
-								.setFontColor(Color.BLACK));
+								.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+							            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+							            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 ))));
 						details.addCell(new Cell().add(ligne.getProduit().getPrix()+"")
-								.setFontSize(9f)
+								.setFontSize(modele.getTaill_txt_corps())
+								.setTextAlignment(TextAlignment.LEFT)
 								.setBackgroundColor(colors[j%2])
-								.setFontColor(Color.BLACK));
-						details.addCell(new Cell().add(facture.getHt()+"")
-								.setFontSize(9f)
+								.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+							            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+							            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 ))));
+						details.addCell(new Cell().add(ligne.getHt()+"")
+								.setFontSize(modele.getTaill_txt_corps())
+								.setTextAlignment(TextAlignment.LEFT)
 								.setBackgroundColor(colors[j%2])
-								.setFontColor(Color.BLACK));
+								.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+							            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+							            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 ))));
 					}else {
 						details.addCell(new Cell().add(ligne.getService().getLibelle())
-								.setFontSize(9f)
+								.setFontSize(modele.getTaill_txt_corps())
+								.setTextAlignment(TextAlignment.LEFT)
 								.setBackgroundColor(colors[j%2])
-								.setFontColor(Color.BLACK));
+								.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+							            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+							            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 ))));
 						details.addCell(new Cell().add(ligne.getQte()+"")
-								.setFontSize(9f)
+								.setFontSize(modele.getTaill_txt_corps())
+								.setTextAlignment(TextAlignment.LEFT)
 								.setBackgroundColor(colors[j%2])
-								.setFontColor(Color.BLACK));
+								.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+							            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+							            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 ))));
 						details.addCell(new Cell().add(ligne.getService().getTaux_horaire()+"")
-								.setFontSize(9f)
+								.setFontSize(modele.getTaill_txt_corps())
+								.setTextAlignment(TextAlignment.LEFT)
 								.setBackgroundColor(colors[j%2])
-								.setFontColor(Color.BLACK));
-						details.addCell(new Cell().add(facture.getHt()+"")
-								.setFontSize(9f)
+								.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+							            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+							            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 ))));
+						details.addCell(new Cell().add(ligne.getHt()+"")
+								.setFontSize(modele.getTaill_txt_corps())
+								.setTextAlignment(TextAlignment.LEFT)
 								.setBackgroundColor(colors[j%2])
-								.setFontColor(Color.BLACK));
+								.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+							            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+							            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 ))));
 					}
 					j++;
 				}
 				
-				details.addCell(new Cell(0,2));
+				details.addCell(new Cell(0,2)
+						.add(modele.getDescription())
+						.setFontSize(modele.getTaill_txt_corps())
+						.setBorder(Border.NO_BORDER)
+						.setTextAlignment(TextAlignment.LEFT)
+						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 ))));
 				
-				details.addCell(new Cell().add("SOUS-TOTAL")
+				details.addCell(new Cell().add("Montant HT")
 						.setFontSize(modele.getTaill_txt_corps())
 						.setTextAlignment(TextAlignment.RIGHT)
 						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
 					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
 					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
 						.setBold());
-				details.addCell(new Cell().add(facture.getHt())
+				details.addCell(new Cell().add(facture.getHt()+"")
 						.setFontSize(modele.getTaill_txt_corps())
 						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
 					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
@@ -411,34 +468,14 @@ public class FactureService {
 						.setBold()
 						.setBorder(Border.NO_BORDER));
 				
-				details.addCell(new Cell().add("TAUX D'IMPOSITION")
+				details.addCell(new Cell().add("Taux d'imposition")
 						.setFontSize(modele.getTaill_txt_corps())
 						.setTextAlignment(TextAlignment.RIGHT)
 						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
 					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
 					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
 						.setBold());
-				details.addCell(new Cell().add(user.getEntreprise().getTaxe()+"")
-						.setFontSize(modele.getTaill_txt_corps())
-						.setTextAlignment(TextAlignment.RIGHT)
-						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
-					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
-					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
-						.setBold());
-				
-				details.addCell(new Cell(0,2)
-						.setFontSize(9f)
-						.setBold()
-						.setBorder(Border.NO_BORDER));
-				
-				details.addCell(new Cell().add("TAXE TOTAL")
-						.setFontSize(modele.getTaill_txt_corps())
-						.setTextAlignment(TextAlignment.RIGHT)
-						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
-					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
-					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
-						.setBold());
-				details.addCell(new Cell().add((facture.getTtc()-facture.getHt()) + "")
+				details.addCell(new Cell().add(user.getEntreprise().getTaxe()+"%")
 						.setFontSize(modele.getTaill_txt_corps())
 						.setTextAlignment(TextAlignment.RIGHT)
 						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
@@ -447,55 +484,102 @@ public class FactureService {
 						.setBold());
 				
 				details.addCell(new Cell(0,2)
-						.setFontSize(9f)
-						.setBold()
-						.setBorder(Border.NO_BORDER));
-				
-				details.addCell(new Cell().add("EXPEDITIO, MANUTENTION")
+						.add("Date d'échéance : " + facture.getEcheance())
 						.setFontSize(modele.getTaill_txt_corps())
-						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
-					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
-					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
-						.setTextAlignment(TextAlignment.RIGHT)
-						.setBold());
-				details.addCell(new Cell().add(facture.getReste()+"")
-						.setFontSize(modele.getTaill_txt_corps())
-						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
-					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
-					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
-						.setTextAlignment(TextAlignment.RIGHT)
-						.setBold());
-				
-				details.addCell(new Cell(0,2)
-						.setFontSize(9f)
-						.setBold()
-						.setBorder(Border.NO_BORDER));
-				
-				details.addCell(new Cell().add("SOLDE DU")
-						.setFontSize(modele.getTaill_total())
-						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_total().substring( 1, 3 ), 16 ),
-					            Integer.valueOf( modele.getCl_total().substring( 3, 5 ), 16 ),
-					            Integer.valueOf( modele.getCl_total().substring( 5, 7 ), 16 )))
-						.setTextAlignment(TextAlignment.RIGHT)
-						.setBold());
-				details.addCell(new Cell().add(facture.getTtc())
-						.setFontSize(modele.getTaill_total())
-						.setTextAlignment(TextAlignment.RIGHT)
-						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_total().substring( 1, 3 ), 16 ),
-					            Integer.valueOf( modele.getCl_total().substring( 3, 5 ), 16 ),
-					            Integer.valueOf( modele.getCl_total().substring( 5, 7 ), 16 )))
-						.setBold());
-				
-				Table description = new Table(1);
-				
-				description.addCell(new Cell().add(modele.getDescription())
-						.setTextAlignment(TextAlignment.CENTER)
-						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
-					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
-					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
 						.setBorder(Border.NO_BORDER)
 						.setBold()
-						.setFontSize(modele.getTaill_txt_corps()));
+						.setTextAlignment(TextAlignment.LEFT)
+						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 ))));
+				
+				details.addCell(new Cell().add("Montant du Taxe")
+						.setFontSize(modele.getTaill_txt_corps())
+						.setTextAlignment(TextAlignment.RIGHT)
+						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
+						.setBold());
+				details.addCell(new Cell().add((facture.getTtc()-facture.getHt())+"")
+						.setFontSize(modele.getTaill_txt_corps())
+						.setTextAlignment(TextAlignment.RIGHT)
+						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
+						.setBold());
+				
+				details.addCell(new Cell(0,2)
+						.setFontSize(9f)
+						.setBold()
+						.setBorder(Border.NO_BORDER));
+				
+				details.addCell(new Cell().add("Total")
+						.setFontSize(modele.getTaill_total())
+						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
+						.setTextAlignment(TextAlignment.RIGHT)
+						.setBold());
+				details.addCell(new Cell().add(facture.getTtc() + "DH")
+						.setFontSize(modele.getTaill_total())
+						.setTextAlignment(TextAlignment.RIGHT)
+						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
+						.setBackgroundColor(new DeviceRgb(Integer.valueOf( modele.getCl_total().substring( 1, 3 ), 16 ),
+					            Integer.valueOf( modele.getCl_total().substring( 3, 5 ), 16 ),
+					            Integer.valueOf( modele.getCl_total().substring( 5, 7 ), 16 )))
+						.setBold());
+				
+				details.addCell(new Cell(0,2)
+						.setFontSize(9f)
+						.setBold()
+						.setBorder(Border.NO_BORDER));
+				
+				details.addCell(new Cell().add("Reglements")
+						.setFontSize(modele.getTaill_txt_corps())
+						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
+						.setTextAlignment(TextAlignment.RIGHT)
+						.setBold());
+				Cell reg = new Cell();
+				for(Reglement reglement : facture.getReglements()) {
+					reg.add(reglement.getDate() + " : " + reglement.getMontant());
+					if((facture.getReglements().size()-1)!=facture.getReglements().indexOf(reglement)) {
+						reg.add("\n");
+					}
+				}
+				details.addCell(reg
+						.setFontSize(modele.getTaill_txt_corps())
+						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
+						.setTextAlignment(TextAlignment.RIGHT)
+						.setBold());
+				
+				details.addCell(new Cell(0,2)
+						.setFontSize(9f)
+						.setBold()
+						.setBorder(Border.NO_BORDER));
+				
+				details.addCell(new Cell().add("Montant dû")
+						.setFontSize(modele.getTaill_total())
+						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
+						.setTextAlignment(TextAlignment.RIGHT)
+						.setBold());
+				details.addCell(new Cell().add(facture.getReste() + "DH")
+						.setFontSize(modele.getTaill_total())
+						.setTextAlignment(TextAlignment.RIGHT)
+						.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_txt_corps().substring( 1, 3 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 3, 5 ), 16 ),
+					            Integer.valueOf( modele.getCl_txt_corps().substring( 5, 7 ), 16 )))
+						.setBackgroundColor(new DeviceRgb(Integer.valueOf( modele.getCl_total().substring( 1, 3 ), 16 ),
+					            Integer.valueOf( modele.getCl_total().substring( 3, 5 ), 16 ),
+					            Integer.valueOf( modele.getCl_total().substring( 5, 7 ), 16 )))
+						.setBold());
 				
 				Table pied = new Table(1);
 				
@@ -529,15 +613,23 @@ public class FactureService {
 				document.add(head.setMarginTop(30));
 				document.add(dest.setMarginTop(20f));
 				document.add(details.setMarginTop(20f));
-				document.add(description.setMarginTop(30f));
 				document.add(pied.setMarginTop(20f));
 				document.close();
 				
-				modele.setEntreprise(user.getEntreprise());
-				modele.setFile(user.getEntreprise().getId_entreprise() + "/" + modele.getNom_modelep() + ".pdf");
+				Path filepath = Paths.get(DIRECTORY + user.getEntreprise().getId_entreprise() + "/factures/").toAbsolutePath().normalize().resolve(facture.getNumero() + "_" + modele.getNom_modelep() + ".pdf");
+				if(!Files.exists(filepath)) throw new FileNotFoundException("Le fichier n'est pas trouve");
+				Resource resource = new UrlResource(filepath.toUri());
+				HttpHeaders headers = new HttpHeaders();
+				headers.add("File-Name", facture.getNumero() + "_" + modele.getNom_modelep());
+				headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachement;File-Name="+resource.getFilename());
+				return ResponseEntity.ok().contentType(MediaType.parseMediaType(Files.probeContentType(filepath)))
+						.headers(headers).body(resource);
 	}
 	
-	public void sendMail() {
-		
+	public void sendMail(FactureSend factureSend, Utilisateur user) throws IOException, MessagingException {
+		this.createFacture(factureSend.getFacture(), factureSend.getModele(), user);
+		this.emailSenderService.sendEmailWithFile(factureSend.getFacture().getClient().getEmail(),
+				factureSend.getObject(), factureSend.getMessage(),
+				new File(DIRECTORY + user.getEntreprise().getId_entreprise() + "/factures/" + factureSend.getFacture().getNumero() + "_" + factureSend.getModele().getNom_modelep() + ".pdf"));
 	}
 }
