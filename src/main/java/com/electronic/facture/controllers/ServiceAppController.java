@@ -44,7 +44,9 @@ public class ServiceAppController {
 	
 	@GetMapping(path = "/{id}")
     @PostAuthorize("hasAnyAuthority('USER')")
-	public void delete(@PathVariable long id){
+	public void delete(@PathVariable(name="id") long id){
+		System.out.println("Delete entre");
+		System.out.println("" + id);
 		this.serviceAppService.delete(id);
 	}
 

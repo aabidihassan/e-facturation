@@ -47,8 +47,7 @@ public class ServiceAppService {
 	}
 	
 	public void delete(long id) {
-		ServiceApp service = this.getById(id);
-		this.serviceRepo.delete(service);
+		this.serviceRepo.deleteById(id);
 	}
 
 }

@@ -9,7 +9,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.electronic.facture.models.AppRole;
+import com.electronic.facture.models.Categorie;
+import com.electronic.facture.models.Reference;
 import com.electronic.facture.models.Utilisateur;
+import com.electronic.facture.repositories.CategorieRepo;
+import com.electronic.facture.repositories.ReferenceRepo;
 import com.electronic.facture.services.AccountServiceImpl;
 import com.electronic.facture.services.AppRoleService;
 import com.electronic.facture.services.UtilisateurService;
@@ -27,10 +31,17 @@ public class EFactureApplication {
     }
 	
 	@Bean
-    CommandLineRunner start(AccountServiceImpl accountService, AppRoleService appRoleService, UtilisateurService utilisateurService){
+    CommandLineRunner start(AccountServiceImpl accountService, ReferenceRepo referenceRepo ,CategorieRepo categorieRepo ,AppRoleService appRoleService, UtilisateurService utilisateurService){
         return args -> {
             appRoleService.addNewRole(new AppRole("ADMIN"));
             appRoleService.addNewRole(new AppRole("USER"));
+            categorieRepo.save(new Categorie("SERVICES", null));
+            categorieRepo.save(new Categorie("PRODUITS", null));
+            categorieRepo.save(new Categorie("PRODUITS & SERVICES", null));
+            Reference ref = referenceRepo.findById((long) 1).get();
+            if(ref==null) {
+            	referenceRepo.save(new Reference());
+            }
 //            utilisateurService.addNewUser(new Utilisateur("hassan", "hassan"));
 //            utilisateurService.addNewUser(new Utilisateur("aabidi", "hassan"));
 //            accountService.affectRoleToUser("hassan", "ADMIN");
