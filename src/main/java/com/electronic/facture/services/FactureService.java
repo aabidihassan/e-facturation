@@ -630,6 +630,7 @@ public class FactureService {
 		this.createFacture(factureSend.getFacture(), factureSend.getModele(), user);
 		this.emailSenderService.sendEmailWithFile(factureSend.getFacture().getClient().getEmail(),
 				factureSend.getObject(), factureSend.getMessage(),
+				user.getEntreprise().getEmail(),
 				new File(DIRECTORY + user.getEntreprise().getId_entreprise() + "/factures/" + factureSend.getFacture().getNumero() + "_" + factureSend.getModele().getNom_modelep() + ".pdf"));
 	}
 }

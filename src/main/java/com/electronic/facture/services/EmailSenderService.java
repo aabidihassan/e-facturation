@@ -31,17 +31,16 @@ public class EmailSenderService {
 		this.javaMailSender.send(mail);
 	} 
 	
-	public void sendEmailWithFile(String to, String subject, String message, File attachment) throws MessagingException {
+	public void sendEmailWithFile(String to, String subject, String message, String from, File attachment) throws MessagingException {
 		MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-		helper.setFrom("labos.management@gmail.com");
+		helper.setFrom(from);
 		helper.setTo(to);
 		helper.setSubject(subject);
 		helper.setText("<html><body>" + message + "</html></body>", true);
 		FileSystemResource file = new FileSystemResource(attachment);
 		helper.addAttachment(attachment.getName(), file);
 		this.javaMailSender.send(mimeMessage);
-
 	}
 
 }
