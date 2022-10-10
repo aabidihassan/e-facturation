@@ -41,7 +41,7 @@ public class Client {
 	private long code_postal;
 	
 	@OneToMany(mappedBy = "client", fetch = FetchType.EAGER) 
-	@JsonIgnore
+	@Fetch(value = FetchMode.SUBSELECT)
 	private List<Facture> factures = new ArrayList<Facture>();
 	
 	@ManyToOne(fetch = FetchType.EAGER) @JsonIgnore
