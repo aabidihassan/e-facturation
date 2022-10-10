@@ -11,10 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,14 +27,13 @@ public class ServiceApp {
 	private String reference;
 	private String libelle;
 	private String description;
-	private double prix;
 	private double taux_horaire;
 	
-	@OneToMany(mappedBy = "service", fetch = FetchType.EAGER) @JsonIgnoreProperties("service")
+	@OneToMany(mappedBy = "service", fetch = FetchType.EAGER)
+	@JsonIgnore
 	private List<LigneCommande> lignes = new ArrayList<LigneCommande>();
 	
-	@ManyToOne(fetch = FetchType.EAGER) @JsonIgnoreProperties("services")
-	@Cascade(CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER) @JsonIgnore
 	private Entreprise entreprise;
 	
 }

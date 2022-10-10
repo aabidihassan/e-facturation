@@ -72,14 +72,12 @@ public class FactureService {
 	public Facture save(Facture facture) throws Exception {
 		
 		switch(facture.getStatut()) {
-			case "brouillon" : 
-				System.out.println("Je suis dans brouillon");
+			case "brouillon" :
 				if(facture.getNumero()!=0) {
-					System.out.println("holla num facture :" + facture.getNumero());
 					Facture old = this.factureRepo.findById(facture.getNumero()).get();
 					if(old != null) {
 						for(LigneCommande l : old.getLignes()) {
-							if(!facture.getLignes().contains(l)) this.ligneCommandeRepo.delete(l);
+							if(facture.getLignes().contains(l)) { System.out.println("heeeeeeeeeeeeeeeeeeeeer"); this.ligneCommandeRepo.delete(l);}
 						}
 					}
 				}
@@ -94,20 +92,36 @@ public class FactureService {
 					ligne.setFacture(facture);
 					ligne = this.ligneCommandeRepo.save(ligne);
 				}
-				return facture;
+				return this.factureRepo.save(facture);
 			case "valide":
-					List<Reglement> reglements = facture.getReglements();
-					for(Reglement reglement : reglements) {
-						reglement.setFacture(facture);
-						reglement = this.reglementRepo.save(reglement);
-					}
 					for(LigneCommande ligne : facture.getLignes()) {
 						if(ligne.getService()==null) {
 							ligne.setProduit(this.produitService.editQte(ligne.getProduit().getId_produit(), ligne.getQte()));
 						}
 					}
-				return this.factureRepo.save(facture);
-			case "paye" : return this.factureRepo.save(facture);
+					facture.setStatut("en cour de paiement");
+					return this.factureRepo.save(facture);
+			case "en cour de paiement" : 
+					for(Reglement reglement : facture.getReglements()) {
+						reglement.setFacture(facture);
+						reglement = this.reglementRepo.save(reglement);
+					}
+					return this.factureRepo.save(facture);
+			case "paye" : 
+				double total = 0;
+				for(Reglement reglement : facture.getReglements()) {
+					total+=reglement.getMontant();
+					if(facture.getReglements().indexOf(reglement)==facture.getReglements().size()-1) {
+						reglement.setFacture(facture);
+						reglement = this.reglementRepo.save(reglement);
+					}
+				}
+				if(total==facture.getTtc()) {
+					return this.factureRepo.save(facture);
+				}else {
+					facture.setStatut("en cour de paiement");
+					this.save(facture);
+				}
 		}
 		return facture;
 	}

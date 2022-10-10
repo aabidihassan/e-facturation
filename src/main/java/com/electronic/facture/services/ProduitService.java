@@ -42,17 +42,19 @@ public class ProduitService {
 	
 	public Produit save(String prod, MultipartFile file, Utilisateur user) throws IOException {
 		Produit produit = new Gson().fromJson(prod, Produit.class);
-		String filename = StringUtils.cleanPath(file.getOriginalFilename());
-    	File directory = new File(DIRECTORY + user.getEntreprise().getId_entreprise() + "/produits/");
-		if (! directory.exists()) directory.mkdir();
-		Path filestorage = Paths.get(DIRECTORY + user.getEntreprise().getId_entreprise() + "/produits/", filename).toAbsolutePath().normalize();
-		Files.copy(file.getInputStream(), filestorage);
-		produit.setPhoto(user.getEntreprise().getId_entreprise() + "/produits/" + filename);
-		if(produit.getReference()==null) {
-			produit.setReference("prod" + this.referenceService.get().getProduit());
-			this.referenceService.incrementProduit();
+		if(file != null) {
+			String filename = StringUtils.cleanPath(file.getOriginalFilename());
+	    	File directory = new File(DIRECTORY + user.getEntreprise().getId_entreprise() + "/produits/");
+			if (! directory.exists()) directory.mkdir();
+			Path filestorage = Paths.get(DIRECTORY + user.getEntreprise().getId_entreprise() + "/produits/", filename).toAbsolutePath().normalize();
+			Files.copy(file.getInputStream(), filestorage);
+			produit.setPhoto(user.getEntreprise().getId_entreprise() + "/produits/" + filename);
+			if(produit.getReference()==null) {
+				produit.setReference("prod" + this.referenceService.get().getProduit());
+				this.referenceService.incrementProduit();
+			}
+			produit.setEntreprise(user.getEntreprise());
 		}
-		produit.setEntreprise(user.getEntreprise());
 		return this.produitRepo.save(produit);
 	}
 	

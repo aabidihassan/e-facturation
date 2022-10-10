@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
@@ -40,10 +41,10 @@ public class Client {
 	private long code_postal;
 	
 	@OneToMany(mappedBy = "client", fetch = FetchType.EAGER) 
-	@Fetch(value = FetchMode.SUBSELECT)
+	@JsonIgnore
 	private List<Facture> factures = new ArrayList<Facture>();
 	
-	@ManyToOne(fetch = FetchType.EAGER) @JsonIgnoreProperties("clients")
+	@ManyToOne(fetch = FetchType.EAGER) @JsonIgnore
 	private Entreprise entreprise;
 
 }

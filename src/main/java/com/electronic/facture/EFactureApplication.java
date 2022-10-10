@@ -38,8 +38,7 @@ public class EFactureApplication {
             categorieRepo.save(new Categorie("SERVICES", null));
             categorieRepo.save(new Categorie("PRODUITS", null));
             categorieRepo.save(new Categorie("PRODUITS & SERVICES", null));
-            Reference ref = referenceRepo.findById((long) 1).get();
-            if(ref==null) {
+            if(!referenceRepo.existsById((long)1)) {
             	referenceRepo.save(new Reference());
             }
 //            utilisateurService.addNewUser(new Utilisateur("hassan", "hassan"));

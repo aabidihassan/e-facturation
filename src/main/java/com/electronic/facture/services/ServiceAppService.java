@@ -39,7 +39,6 @@ public class ServiceAppService {
 		if(s!=null && s.getEntreprise().getId_entreprise() == user.getEntreprise().getId_entreprise()) {
 			s.setDescription(service.getDescription());
 			s.setLibelle(service.getLibelle());
-			s.setPrix(service.getPrix());
 			s.setTaux_horaire(service.getTaux_horaire());
 			return this.serviceRepo.save(s);
 		}

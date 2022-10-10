@@ -59,12 +59,12 @@ public class Entreprise {
 	@OneToMany(mappedBy = "entreprise") @JsonIgnoreProperties("entreprise")
 	private List<Modele> modeles = new ArrayList<Modele>();
 	
-	@OneToMany(mappedBy = "entreprise") @JsonIgnoreProperties("entreprise")
-	@Cascade(CascadeType.ALL)
+	@OneToMany(mappedBy = "entreprise", fetch = FetchType.EAGER) 
+	@Fetch(value = FetchMode.SUBSELECT)
 	private List<Produit> produits = new ArrayList<Produit>();
 	
-	@OneToMany(mappedBy = "entreprise") @JsonIgnoreProperties("entreprise")
-	@Cascade(CascadeType.ALL)
+	@OneToMany(mappedBy = "entreprise", fetch = FetchType.EAGER) 
+	@Fetch(value = FetchMode.SUBSELECT)
 	private List<ServiceApp> services = new ArrayList<ServiceApp>();
 
 }

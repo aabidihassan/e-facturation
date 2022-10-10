@@ -17,8 +17,8 @@ public class JwtUtil {
 	public static final String SECRET = "mySecret123";
     public static final String AUTH_HEADER = "Authorization";
     public static final String PREFIX = "Bearer ";
-    public static final long EXPIRE_ACCESS_TOKEN = 60*60*1000;
-    public static final long EXPIRE_REFRESH_TOKEN = 192*60*60*1000;
+    public static final long EXPIRE_ACCESS_TOKEN = 168*60*60*1000;
+    public static final long EXPIRE_REFRESH_TOKEN = 60*60*1000;
 
 
     private static final Algorithm algorithm = Algorithm.HMAC256(JwtUtil.SECRET);
@@ -36,7 +36,7 @@ public class JwtUtil {
     public static String createRefreshToken(User user, String url){
         return JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis()+JwtUtil.EXPIRE_REFRESH_TOKEN))
+                .withExpiresAt(new Date(System.currentTimeMillis()+(JwtUtil.EXPIRE_REFRESH_TOKEN * 744)))
                 .withIssuer(url)
                 .withClaim("roles", user.getAuthorities().stream().map(ga->ga.getAuthority()).collect(Collectors.toList()))
                 .sign(JwtUtil.algorithm);
