@@ -52,28 +52,33 @@ public class ModeleService {
 	public Modele save(Modele modele, Utilisateur user) throws IOException {
 		//Get or create if not exists file
 		File directory = new File(DIRECTORY + user.getEntreprise().getId_entreprise() + "/");
-		if (! directory.exists()) directory.mkdirs();
+		if (! directory.exists()) directory.mkdir();
 		File file = new File(directory.getPath() + "/" + modele.getNom_modelep() + ".pdf");
-		System.out.println(file.getAbsolutePath());
 		file.createNewFile();
 		FileOutputStream oFile = new FileOutputStream(file, false); 
-		
+		System.out.println("1");
 		//Start generating the file
 		PdfWriter pdfWriter = new PdfWriter(oFile);
+		System.out.println("2");
 		PdfDocument pdfDocument = new PdfDocument(pdfWriter);
+		System.out.println("3");
 		
 		Document document = new Document(pdfDocument);
+		System.out.println("4");
 		pdfDocument.setDefaultPageSize(PageSize.A4);
 		
 		float headWidth[] = {100f, 250f, 250f};
 		Table head = new Table(headWidth);
 		
 		head.setFontColor(Color.BLACK);
-		ImageData data = ImageDataFactory.create(getClass().getClassLoader().getResource("templates/" + user.getEntreprise().getLogo())); 
+		ImageData data = ImageDataFactory.create(getClass().getClassLoader().getResource("templates/" + user.getEntreprise().getLogo()));
+		System.out.println("5");
+		System.out.println(user.getEntreprise().getRaison());
 		
 		
 		float infoWidth[] = {125f, 125f};
 		Table infos = new Table(infoWidth);
+		System.out.println("1");
 		infos.addCell(new Cell(0,2).add(user.getEntreprise().getRaison().toUpperCase())
 				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_titre_entt().substring( 1, 3 ), 16 ),
 			            Integer.valueOf( modele.getCl_titre_entt().substring( 3, 5 ), 16 ),
@@ -81,6 +86,7 @@ public class ModeleService {
 				.setBorder(Border.NO_BORDER)
 				.setFontSize(modele.getTaill_titre_entt())
 				.setBold());
+		System.out.println("6oneone");
 		
 		infos.addCell(new Cell(0,2).add(user.getEntreprise().getAdresse1())
 				.setBorder(Border.NO_BORDER)
@@ -88,6 +94,7 @@ public class ModeleService {
 			            Integer.valueOf( modele.getCl_txt_entt().substring( 3, 5 ), 16 ),
 			            Integer.valueOf( modele.getCl_txt_entt().substring( 5, 7 ), 16 )))
 				.setFontSize(modele.getTaill_txt_entt()));
+		System.out.println("6onetwo");
 		
 		infos.addCell(new Cell(0,2).add(user.getEntreprise().getTelephone1())
 				.setBorder(Border.NO_BORDER)
@@ -124,6 +131,7 @@ public class ModeleService {
 		
 		
 		if(modele.getPosition().equals("G")) {
+			System.out.println("6one");
 			head.addCell(new Cell().add(new Image(data).setAutoScale(false))
 					.setBorder(Border.NO_BORDER));
 			
@@ -277,6 +285,7 @@ public class ModeleService {
 				.setFontColor(new DeviceRgb(Integer.valueOf( modele.getCl_titre_corps().substring( 1, 3 ), 16 ),
 			            Integer.valueOf( modele.getCl_titre_corps().substring( 3, 5 ), 16 ),
 			            Integer.valueOf( modele.getCl_titre_corps().substring( 5, 7 ), 16 ))));
+		System.out.println("6");
 		
 		DeviceRgb[] colors = {new DeviceRgb(255, 255, 255), new DeviceRgb(243, 243, 243)};
 		
@@ -457,7 +466,9 @@ public class ModeleService {
 		document.add(dest.setMarginTop(20f));
 		document.add(details.setMarginTop(20f));
 		document.add(pied.setMarginTop(20f));
+		System.out.println("6");
 		document.close();
+		System.out.println("7");
 		
 		modele.setEntreprise(user.getEntreprise());
 		modele.setFile(user.getEntreprise().getId_entreprise() + "/" + modele.getNom_modelep() + ".pdf");
