@@ -45,6 +45,7 @@ public class Entreprise {
 	private String code_postal;
 	private String logo;
 	private double taxe;
+	private boolean active = true;
 	
 	@ManyToOne(fetch = FetchType.EAGER) @JsonIgnoreProperties("entreprises")
 	private Categorie categorie;

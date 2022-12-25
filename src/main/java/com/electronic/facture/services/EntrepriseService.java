@@ -25,5 +25,11 @@ public class EntrepriseService {
 	public Entreprise findById(long id) {
 		return this.entrepriseRepo.findById(id).get();
 	}
+	
+	public Entreprise changeEtat(long id) {
+		Entreprise entreprise = this.findById(id);
+		entreprise.setActive(!entreprise.isActive());
+		return this.entrepriseRepo.save(entreprise);
+	}
 
 }

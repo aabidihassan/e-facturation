@@ -34,5 +34,11 @@ public class EntrepriseController {
 	public Entreprise findById(@PathVariable(name = "id") long id){
 		return this.entrepriseService.findById(id);
 	}
+	
+	@GetMapping("/etat/{id}")
+	@PreAuthorize("hasAnyAuthority('ADMIN')")
+	public Entreprise changeEtat(@PathVariable(name = "id") long id){
+		return this.entrepriseService.changeEtat(id);
+	}
 
 }

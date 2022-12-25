@@ -7,7 +7,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -77,7 +80,7 @@ public class FactureService {
 					Facture old = this.factureRepo.findById(facture.getNumero()).get();
 					if(old != null) {
 						for(LigneCommande l : old.getLignes()) {
-							if(facture.getLignes().contains(l)) { System.out.println("heeeeeeeeeeeeeeeeeeeeer"); this.ligneCommandeRepo.delete(l);}
+							if(facture.getLignes().contains(l)) this.ligneCommandeRepo.delete(l);
 						}
 					}
 				}
@@ -646,5 +649,21 @@ public class FactureService {
 				factureSend.getObject(), factureSend.getMessage(),
 				user.getEntreprise().getEmail(),
 				new File(DIRECTORY + user.getEntreprise().getId_entreprise() + "/factures/" + factureSend.getFacture().getNumero() + "_" + factureSend.getModele().getNom_modelep() + ".pdf"));
+	}
+	
+	public void echeance() {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");  
+		LocalDateTime now = LocalDateTime.now();
+		SimpleDateFormat sdformat = new SimpleDateFormat("MM/dd/yyyy");
+		this.factureRepo.findFacturesByStatutNotLike("echoue").forEach((f)->{
+			try {
+				if(sdformat.parse(f.getEcheance()).compareTo(sdformat.parse(dtf.format(now)))<0) {
+					f.setStatut("echoue");
+					this.factureRepo.save(f);
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 }

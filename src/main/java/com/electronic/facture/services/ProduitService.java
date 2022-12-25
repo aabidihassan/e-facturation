@@ -42,6 +42,7 @@ public class ProduitService {
 	
 	public Produit save(String prod, MultipartFile file, Utilisateur user) throws IOException {
 		Produit produit = new Gson().fromJson(prod, Produit.class);
+		produit.setEntreprise(user.getEntreprise());
 		if(file != null) {
 			String filename = StringUtils.cleanPath(file.getOriginalFilename());
 	    	File directory = new File(DIRECTORY + user.getEntreprise().getId_entreprise() + "/produits/");
@@ -53,7 +54,6 @@ public class ProduitService {
 				produit.setReference("prod" + this.referenceService.get().getProduit());
 				this.referenceService.incrementProduit();
 			}
-			produit.setEntreprise(user.getEntreprise());
 		}
 		return this.produitRepo.save(produit);
 	}

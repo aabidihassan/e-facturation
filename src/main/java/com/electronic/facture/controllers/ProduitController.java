@@ -47,7 +47,7 @@ public class ProduitController {
 	
 	@PostMapping(path = "/")
     @PostAuthorize("hasAnyAuthority('USER')")
-	public Produit save(@RequestParam("produit") String produit, @RequestParam("file") MultipartFile file ,Principal principal) throws IOException{
+	public Produit save(@RequestParam("produit") String produit, @RequestParam(name = "file", required = false) MultipartFile file ,Principal principal) throws IOException{
 		return this.produitService.save(produit, file, utilisateurService.loadUserByUsername(principal.getName()));
 	}
 	

@@ -26,17 +26,25 @@ import com.electronic.facture.models.Utilisateur;
 import com.electronic.facture.repositories.ModeleRepository;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.color.DeviceRgb;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.border.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.TextAlignment;
+import com.lowagie.text.Element;
+import com.lowagie.text.pdf.ColumnText;
+import com.lowagie.text.pdf.PdfContentByte;
 
 @Service
 public class ModeleService {
@@ -459,21 +467,26 @@ public class ModeleService {
 				.setMarginLeft(-40f)
 				.setHeight(12f));
 		
+		Cell info = new Cell().add(modele.getEntreprise().getRaison())
+				.setFontColor(Color.BLACK).setFontSize(11);
 		
-		//CLose file
+
+		//add content
 		document.add(top.setMarginTop(-36));
 		document.add(head.setMarginTop(30));
 		document.add(dest.setMarginTop(20f));
 		document.add(details.setMarginTop(20f));
 		document.add(pied.setMarginTop(20f));
-		System.out.println("6");
+		document.add(info);
+		
+		//Close file
 		document.close();
-		System.out.println("7");
 		
 		modele.setEntreprise(user.getEntreprise());
 		modele.setFile(user.getEntreprise().getId_entreprise() + "/" + modele.getNom_modelep() + ".pdf");
 		return this.modeleRepository.save(modele);
 	}
+	
 	
 	public ResponseEntity<Resource> download(String filename, long id) throws IOException{
 		Path filepath = Paths.get(DIRECTORY + id + "/").toAbsolutePath().normalize().resolve(filename);
