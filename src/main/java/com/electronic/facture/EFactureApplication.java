@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.electronic.facture.models.AppRole;
 import com.electronic.facture.models.Categorie;
 import com.electronic.facture.models.Reference;
+import com.electronic.facture.models.Utilisateur;
 import com.electronic.facture.repositories.CategorieRepo;
 import com.electronic.facture.repositories.ReferenceRepo;
 import com.electronic.facture.services.AccountServiceImpl;
@@ -33,7 +34,7 @@ public class EFactureApplication {
 	@Autowired
 	private FactureService factureService;
 	
-	@Scheduled(cron = "0 0 1 * * *")
+	@Scheduled(cron = "0 1 1 * * *")
     public void task() {
         this.factureService.echeance();
     }
@@ -54,9 +55,9 @@ public class EFactureApplication {
             if(!referenceRepo.existsById((long)1)) {
             	referenceRepo.save(new Reference());
             }
-//            utilisateurService.addNewUser(new Utilisateur("hassan", "hassan"));
+            utilisateurService.save(new Utilisateur("admin", "admin"));
 //            utilisateurService.addNewUser(new Utilisateur("aabidi", "hassan"));
-//            accountService.affectRoleToUser("hassan", "ADMIN");
+            accountService.affectRoleToUser("admin", "ADMIN");
 //            accountService.affectRoleToUser("aabidi", "USER");
 
         };

@@ -467,9 +467,6 @@ public class ModeleService {
 				.setMarginLeft(-40f)
 				.setHeight(12f));
 		
-		Cell info = new Cell().add(modele.getEntreprise().getRaison())
-				.setFontColor(Color.BLACK).setFontSize(11);
-		
 
 		//add content
 		document.add(top.setMarginTop(-36));
@@ -477,7 +474,6 @@ public class ModeleService {
 		document.add(dest.setMarginTop(20f));
 		document.add(details.setMarginTop(20f));
 		document.add(pied.setMarginTop(20f));
-		document.add(info);
 		
 		//Close file
 		document.close();

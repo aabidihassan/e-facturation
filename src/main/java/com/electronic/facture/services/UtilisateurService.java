@@ -34,6 +34,11 @@ public class UtilisateurService {
         return utilisateurRepo.save(user);
     }
 	
+	public Utilisateur save(Utilisateur user) {
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		return this.utilisateurRepo.save(user);
+	}
+	
 	public Utilisateur loadUserByUsername(String username) {
         return utilisateurRepo.findByUsername(username);
     }
